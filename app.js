@@ -1,4 +1,5 @@
 const imagesArea = document.querySelector('.images');
+const imageCount = document.getElementById("image-count");
 const gallery = document.querySelector('.gallery');
 const galleryHeader = document.querySelector('.gallery-header');
 const searchBtn = document.getElementById('search-btn');
@@ -6,10 +7,9 @@ const sliderBtn = document.getElementById('create-slider');
 const sliderContainer = document.getElementById('sliders');
 const search = document.getElementById('search');
 const duration = document.getElementById('duration');
-
+const status = 'Open';
 // selected image 
 let sliders = [];
-
 
 // If this key doesn't work
 // Find the name in the url and go to their website
@@ -21,6 +21,7 @@ const KEY = '15674931-a9d714b6e9d654524df198e00&q';
   const showImages = (images) => {
   imagesArea.style.display = 'block';
   gallery.innerHTML = '';
+  imageCount.innerHTML='';
 
 // show gallery title
 
@@ -37,25 +38,34 @@ const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 
 const getImages = (query) => { 
     toggleSpinner();
-    const url = `https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`
+    const url = `https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`;
     fetch(url)
         .then((response) => response.json())
         .then((data) => showImages(data.hits))
-        .catch(error => displayError('Something Went Wrong!! Your search result not found. Please try again.'));
+        .catch((error) => displayError('Something Went Wrong!! Your search result not found. Please try again.'));
 };
 
 let slideIndex = 0;
 const selectItem = (event, img) => {
   let element = event.target;
-  element.classList.add('added');
+  element.classList.toggle('added');
  
   let item = sliders.indexOf(img);
   if (item === -1) {
     sliders.push(img);
   } else {
-    sliders.splice(item,1)
-    element.classList.remove('added')
+    sliders.splice(item,1);
+    element.classList.remove('added');
   }
+  //count selected images 
+ let total=sliders.length;
+ let remain='';
+  for (let i=0;i<sliders.length ;i++) {
+     if (sliders[i].status ==="Open") { 
+       remain++;
+     }
+  }
+  imageCount.innerHTML=` (${total})`;
 };
 
 
@@ -158,7 +168,7 @@ const goBack = () => {
   clearInterval(timer);
 };
 // display error message
-const displayError = error => {
+const displayError = (error) => {
   const errorTag = document.getElementById('error-message');
   errorTag.innerText = error;
 }
